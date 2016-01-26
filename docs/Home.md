@@ -43,6 +43,7 @@ Browse the Jenkins issue tracker to see any [open issues](https://issues.jenkins
    Plugin](https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin) is deprecated,
    see [Migration](Migration#migrating-to-143)
  * Deprecated some methods in `JobManagement` interface, see [Migration](Migration#migrating-to-143)
+ * Add support for `allowEmptyResults` option in [JUnit Plugin](https://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin)
 * 1.42 (January 05 2016)
  * Added support for the [Dashboard View Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View)
    ([JENKINS-29146](https://issues.jenkins-ci.org/browse/JENKINS-29146))
