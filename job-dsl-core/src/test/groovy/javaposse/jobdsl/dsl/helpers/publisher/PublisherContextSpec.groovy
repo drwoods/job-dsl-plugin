@@ -202,6 +202,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call junit archive with all args'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
+
         when:
         context.archiveJunit('include/*') {
             allowEmptyResults()
@@ -228,7 +231,6 @@ class PublisherContextSpec extends Specification {
             testDataPublishers[0].'com.google.jenkins.flakyTestHandler.plugin.JUnitFlakyTestDataPublisher'[0] != null
         }
 
-        1 * jobManagement.requireMinimumPluginVersion('junit', '1.10')
         1 * jobManagement.requireMinimumPluginVersion('claim', '2.0')
         1 * jobManagement.requireMinimumPluginVersion('junit-attachments', '1.0')
         1 * jobManagement.requireMinimumPluginVersion('test-stability', '1.0')
@@ -236,6 +238,9 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call junit archive with minimal args'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
+
         when:
         context.archiveJunit('include/*')
 
@@ -248,6 +253,20 @@ class PublisherContextSpec extends Specification {
             allowEmptyResults[0].value() == false
             testDataPublishers[0].children().size() == 0
         }
+    }
+
+    def 'call junit archive with minimal args, plugin version older than 1.10'() {
+        when:
+            context.archiveJunit('include/*')
+
+        then:
+            with(context.publisherNodes[0]) {
+                name() == 'hudson.tasks.junit.JUnitResultArchiver'
+                children().size() == 3
+                testResults[0].value() == 'include/*'
+                keepLongStdio[0].value() == false
+                testDataPublishers[0].children().size() == 0
+            }
     }
 
     def 'call archiveXUnit with no args'() {
