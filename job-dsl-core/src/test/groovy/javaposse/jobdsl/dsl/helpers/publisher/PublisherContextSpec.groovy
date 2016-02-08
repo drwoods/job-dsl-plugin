@@ -420,8 +420,12 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call junit archive with all args'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
+
         when:
         context.archiveJunit('include/*') {
+            allowEmptyResults()
             retainLongStdout()
             testDataPublishers {
                 allowClaimingOfFailedTests()
@@ -434,8 +438,9 @@ class PublisherContextSpec extends Specification {
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.junit.JUnitResultArchiver'
-            children().size() == 3
+            children().size() == 4
             testResults[0].value() == 'include/*'
+            allowEmptyResults[0].value() == true
             keepLongStdio[0].value() == true
             testDataPublishers[0].children().size() == 4
             testDataPublishers[0].'hudson.plugins.claim.ClaimTestDataPublisher'[0] != null
@@ -451,17 +456,35 @@ class PublisherContextSpec extends Specification {
     }
 
     def 'call junit archive with minimal args'() {
+        setup:
+        jobManagement.isMinimumPluginVersionInstalled('junit', '1.10') >> true
+
         when:
         context.archiveJunit('include/*')
 
         then:
         with(context.publisherNodes[0]) {
             name() == 'hudson.tasks.junit.JUnitResultArchiver'
-            children().size() == 3
+            children().size() == 4
             testResults[0].value() == 'include/*'
             keepLongStdio[0].value() == false
+            allowEmptyResults[0].value() == false
             testDataPublishers[0].children().size() == 0
         }
+    }
+
+    def 'call junit archive with minimal args, plugin version older than 1.10'() {
+        when:
+            context.archiveJunit('include/*')
+
+        then:
+            with(context.publisherNodes[0]) {
+                name() == 'hudson.tasks.junit.JUnitResultArchiver'
+                children().size() == 3
+                testResults[0].value() == 'include/*'
+                keepLongStdio[0].value() == false
+                testDataPublishers[0].children().size() == 0
+            }
     }
 
     def 'call archiveXUnit with no args'() {

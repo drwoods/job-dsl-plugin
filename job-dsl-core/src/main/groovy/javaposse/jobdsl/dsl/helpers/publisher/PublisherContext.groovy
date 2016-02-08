@@ -203,6 +203,9 @@ class PublisherContext extends AbstractExtensibleContext {
             testResults(glob)
             keepLongStdio(junitContext.retainLongStdout)
             testDataPublishers(junitContext.testDataPublishersContext.testDataPublishers)
+            if (jobManagement.isMinimumPluginVersionInstalled('junit', '1.10')) {
+                allowEmptyResults(junitContext.allowEmptyResults)
+            }
         }
     }
 
